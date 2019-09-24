@@ -82,8 +82,8 @@ class Subscription(object):
 
         return value
 
-    def addlistener(self, listener):
-        self._listeners.append(listener)
+    def addlistener(self, listener, list_args=[]):
+        self._listeners.append({ 'function': listener, 'args': list_args })
 
     def notifyupdate(self, item_line):
         """Invoked by LSClient each time Lightstreamer Server pushes
@@ -111,8 +111,8 @@ class Subscription(object):
         }
 
         # Update each registered listener with new event
-        for on_item_update in self._listeners:
-            on_item_update(item_info)
+        for listener_info in self._listeners:
+            listener_info['function'](item_info, *listener_info['args'])
 
 
 class LSClient(object):
